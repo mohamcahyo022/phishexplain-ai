@@ -5,16 +5,15 @@ import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
 
-// Konfigurasi dasar
+// Konfigurasi lingkungan
 dotenv.config();
 const app = express();
-const port = 3000;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Akses ke folder public
+// Path public
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -23,9 +22,10 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-// Endpoint untuk menerima prompt
+// Endpoint utama untuk cek URL
 app.post("/check", async (req, res) => {
   const { prompt } = req.body;
+
   if (!prompt) {
     return res.status(400).json({ error: "Prompt tidak boleh kosong." });
   }
@@ -48,7 +48,5 @@ app.post("/check", async (req, res) => {
   }
 });
 
-// Jalankan server
-app.listen(port, () => {
-  console.log(`Server berjalan di http://localhost:${port}`);
-});
+// ✅ Wajib untuk Vercel (tanpa app.listen)
+export default app;
